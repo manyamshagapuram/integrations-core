@@ -62,7 +62,7 @@ install:
   - cd wmi_check
   - ps: (& "$env:PYTHON/Scripts/pip.exe" install .)
   - cd ..
-  - ps: @(& git diff --name-only master... | Select-String -Pattern "\.(py|ini|in|txt)$" | % { $_.Line.Split('/')[0] } |select -unique)
+  - ps: (& git diff --name-only master... | Select-String -Pattern "\.(py|ini|in|txt)$" | % { $_.Line.Split('/')[0] } | select -unique)
 build: off
 test_script:
   - echo $TEST_ENV_VAR
