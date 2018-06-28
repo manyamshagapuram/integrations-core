@@ -61,7 +61,7 @@ install:
   - cd wmi_check
   - ps: (& "$env:PYTHON/Scripts/pip.exe" install .)
   - cd ..
-  - pwd
+  - git diff --name-only master...| grep *(\.py|\.ini|\.in|\.txt)
   - ls -a
 build: off
 test_script:
