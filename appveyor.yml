@@ -28,6 +28,7 @@ services:
   # - mssql2014 # FIXME: re-enable when we can launch multiple mssql instances at once
 install:
   # Use the 64-bit ruby so that all the Powershell classes are accessible when running shell commands from ruby
+  - set TEST_ENV_VAR="rish"
   - set PATH=C:\Ruby22-x64\bin;%PATH%
   - bundle install
   - bundle package
@@ -61,10 +62,10 @@ install:
   - cd wmi_check
   - ps: (& "$env:PYTHON/Scripts/pip.exe" install .)
   - cd ..
-  - git diff --name-only master...| grep *(\.py|\.ini|\.in|\.txt)
-  - ls -a
+  - ps: @(& git diff --name-only master... | Select-String -Pattern "\.(py|ini|in|txt)$" | % { $_.Line.Split('/')[0] } |select -unique)
 build: off
 test_script:
+  - echo $TEST_ENV_VAR
   - bundle exec rake ci:run[sqlserver]
   - bundle exec rake ci:run[windows_service]
   - bundle exec rake ci:run[wmi_check]
