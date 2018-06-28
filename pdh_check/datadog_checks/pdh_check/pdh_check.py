@@ -13,7 +13,7 @@ class PDHCheck(AgentCheck):
     """
     WMI check.
 
-    Windows only.
+    Windows only!
     """
     def __init__(self, name, init_config, agentConfig, instances=None):
         AgentCheck.__init__(self, name, init_config, agentConfig, instances)
