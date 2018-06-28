@@ -61,6 +61,8 @@ install:
   - cd wmi_check
   - ps: (& "$env:PYTHON/Scripts/pip.exe" install .)
   - cd ..
+  - pwd
+  - ls -a
 build: off
 test_script:
   - bundle exec rake ci:run[sqlserver]
