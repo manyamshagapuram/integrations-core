@@ -48,27 +48,37 @@ install:
   - ps: (& "$env:PYTHON/Scripts/pip.exe" install invoke)
   - ps: (& "$env:PYTHON/Scripts/pip.exe" install pip-tools)
   - ps: (& "$env:PYTHON/Scripts/pip.exe" install packaging)
-  - cd datadog_checks_base
-  - ps: (& "$env:PYTHON/Scripts/pip.exe" install .)
-  - cd ..
-  - cd sqlserver
-  - ps: (& "$env:PYTHON/Scripts/pip.exe" install -r requirements.txt)
-  - ps: (& "$env:PYTHON/Scripts/pip.exe" install .)
-  - cd ..
-  - cd windows_service
-  - ps: (& "$env:PYTHON/Scripts/pip.exe" install .)
-  - cd ..
-  - cd wmi_check
-  - ps: (& "$env:PYTHON/Scripts/pip.exe" install .)
-  - cd ..
   - ps: $valid_targets = @("datadog_checks_base", "datadog_checks_tests_helper", "aspdotnet", "active_directory", "dotnetclr", "exchange_server", "iis", "pdh_check")
   - ps: $git_diff = (& git diff --name-only master...)
   - ps: $testable_files = $git_diff | Select-String -Pattern "\.(py|ini|in|txt)$"
   - ps: $changed_integrations = $testable_files | % { $_.Line.Split('/')[0] } | select -unique
   - ps: $targets = $changed_integrations | ? { $valid_targets -contains $_ }
   - ps: $env:TARGETS=($targets -join ',')
+  - ps: >-
+      If ($changed_integrations -contains "datadog_checks_base") {
+        cd datadog_checks_base
+        (& "$env:PYTHON/Scripts/pip.exe" install .)
+        cd ..
+      }
+      If ($changed_integrations -contains "sqlserver") {
+        cd datadog_checks_base
+        (& "$env:PYTHON/Scripts/pip.exe" install -r requirements.txt)
+        (& "$env:PYTHON/Scripts/pip.exe" install .)
+        cd ..
+      }
+      If ($changed_integrations -contains "windows_service") {
+        cd datadog_checks_base
+        (& "$env:PYTHON/Scripts/pip.exe" install .)
+        cd ..
+      }
+      If ($changed_integrations -contains "wmi_check") {
+        cd datadog_checks_base
+        (& "$env:PYTHON/Scripts/pip.exe" install .)
+        cd ..
+      }
 build: off
 test_script:
+  - python -c "import os; print(str(os.environ))"
   - bundle exec rake ci:run[sqlserver]
   - bundle exec rake ci:run[windows_service]
   - bundle exec rake ci:run[wmi_check]
