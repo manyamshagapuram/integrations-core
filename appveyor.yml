@@ -53,7 +53,8 @@ install:
   - ps: $testable_files = $git_diff | Select-String -Pattern "\.(py|ini|in|txt)$"
   - ps: $changed_integrations = $testable_files | % { $_.Line.Split('/')[0] } | select -unique
   - ps: $targets = $changed_integrations | ? { $valid_targets -contains $_ }
-  - ps: $env:TARGETS=($targets -join ',')
+  - ps: $targets -join ','
+  - ps: $env:TARGETS="datadog_checks_base"
   - ps: >-
       If ($changed_integrations -contains "datadog_checks_base") {
         cd datadog_checks_base
@@ -82,4 +83,5 @@ test_script:
   - bundle exec rake ci:run[sqlserver]
   - bundle exec rake ci:run[windows_service]
   - bundle exec rake ci:run[wmi_check]
+  - ps: $env:TARGETS
   - inv test --targets="%TARGETS%"

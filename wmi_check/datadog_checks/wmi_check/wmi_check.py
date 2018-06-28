@@ -12,7 +12,7 @@ class WMICheck(WinWMICheck):
     """
     WMI check.
 
-    Windows only.
+    Windows only!
     """
     def __init__(self, name, init_config, agentConfig, instances):
         WinWMICheck.__init__(self, name, init_config, agentConfig, instances)
