@@ -1,5 +1,5 @@
 version: '{branch}.{build}'
-shallow_clone: true
+clone_depth: 3
 environment:
   TRAVIS_BUILD_DIR: c:\projects\integrations-core
   INTEGRATIONS_DIR: c:\projects\integrations-core\embedded
@@ -62,10 +62,12 @@ install:
   - cd wmi_check
   - ps: (& "$env:PYTHON/Scripts/pip.exe" install .)
   - cd ..
+  - ls -a
+  - pwd
   - ps: (& git diff --name-only master... | Select-String -Pattern "\.(py|ini|in|txt)$" | % { $_.Line.Split('/')[0] } | select -unique)
 build: off
 test_script:
-  - echo $TEST_ENV_VAR
+  - echo %MY_VARIABLE%
   - bundle exec rake ci:run[sqlserver]
   - bundle exec rake ci:run[windows_service]
   - bundle exec rake ci:run[wmi_check]
